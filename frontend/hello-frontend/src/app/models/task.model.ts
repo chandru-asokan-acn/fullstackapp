@@ -1,9 +1,14 @@
 export interface Task {
   id?: number;
-  title: string;
-  description?: string;
+  description: string;
   status: TaskStatus;
+  assignee: string;
   createdDate?: string;
+}
+
+export interface TaskStatusCount {
+  status: TaskStatus;
+  count: number;
 }
 
 export enum TaskStatus {
