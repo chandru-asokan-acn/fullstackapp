@@ -2,7 +2,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY target/hello-backend-1.0.0.jar app.jar
+COPY target/task-management-backend.jar app.jar
 
 # Verify JAR file
 RUN ls -la app.jar && file app.jar

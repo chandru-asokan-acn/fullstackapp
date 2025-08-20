@@ -2,7 +2,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY backend/target/hello-backend-1.0.0.jar app.jar
+COPY backend/target/task-management-backend.jar app.jar
 
 EXPOSE 8080
 

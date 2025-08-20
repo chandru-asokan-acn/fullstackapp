@@ -14,9 +14,9 @@ phases:
       - mvn clean package -DskipTests
       - echo Verifying JAR file...
       - ls -la target/
-      - file target/hello-backend-1.0.0.jar
-      - cp target/hello-backend-1.0.0.jar .
-      - echo Backend JAR created and copied to root
+      - file target/task-management-backend.jar
+      - cp target/task-management-backend.jar application.jar
+      - echo Backend JAR created and renamed to application.jar
       - cd ../frontend/hello-frontend
       - echo Building Task Management Frontend...
       - npm install
@@ -24,7 +24,7 @@ phases:
       - echo Frontend build complete
 artifacts:
   files:
-    - backend/hello-backend-1.0.0.jar
+    - backend/application.jar
     - backend/Procfile
     - backend/.ebextensions/**/*
     - frontend/hello-frontend/dist/**/*

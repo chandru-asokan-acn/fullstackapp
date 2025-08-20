@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HelloBackendApplication {
+public class TaskManagementApplication {
     public static void main(String[] args) {
-        SpringApplication.run(HelloBackendApplication.class, args);
+        SpringApplication.run(TaskManagementApplication.class, args);
     }
 }

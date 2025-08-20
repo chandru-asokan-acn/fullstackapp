@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.example</groupId>
-    <artifactId>hello-backend</artifactId>
+    <artifactId>task-management-backend</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
@@ -51,13 +51,14 @@
     </dependencies>
     
     <build>
-        <finalName>hello-backend-1.0.0</finalName>
+        <finalName>task-management-backend</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <executable>true</executable>
+                    <mainClass>com.example.TaskManagementApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

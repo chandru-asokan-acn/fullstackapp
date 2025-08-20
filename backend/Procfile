@@ -1,1 +1,1 @@
-web: java -jar hello-backend-1.0.0.jar --server.port=$PORT
+web: java -jar application.jar --server.port=$PORT
