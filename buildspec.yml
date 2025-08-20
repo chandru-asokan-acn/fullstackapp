@@ -16,7 +16,8 @@ phases:
       - ls -la target/
       - file target/task-management-backend.jar
       - cp target/task-management-backend.jar application.jar
-      - echo Backend JAR created and renamed to application.jar
+      - echo Backend JAR created with Excel upload fix
+      - echo JAR size: $(stat -c%s application.jar) bytes
       - cd ../frontend/hello-frontend
       - echo Building Task Management Frontend...
       - npm install

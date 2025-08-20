@@ -79,6 +79,13 @@ public class TaskService {
     public List<Task> uploadTasksFromExcel(MultipartFile file) throws IOException {
         List<Task> tasks = new ArrayList<>();
         
+        if (file.isEmpty()) {
+            throw new IOException("File is empty");
+        }
+        
+        // Clear all existing tasks before uploading new ones
+        taskRepository.deleteAll();
+        
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             
@@ -90,23 +97,40 @@ public class TaskService {
                 Cell assigneeCell = row.getCell(2);
                 
                 if (descCell != null && statusCell != null && assigneeCell != null) {
-                    String description = descCell.getStringCellValue();
-                    String statusStr = statusCell.getStringCellValue().toUpperCase();
-                    String assignee = assigneeCell.getStringCellValue();
+                    String description = getCellValueAsString(descCell);
+                    String statusStr = getCellValueAsString(statusCell).toUpperCase().replace(" ", "_");
+                    String assignee = getCellValueAsString(assigneeCell);
                     
-                    TaskStatus status;
-                    try {
-                        status = TaskStatus.valueOf(statusStr);
-                    } catch (IllegalArgumentException e) {
-                        status = TaskStatus.TODO; // Default status
+                    if (!description.trim().isEmpty() && !assignee.trim().isEmpty()) {
+                        TaskStatus status;
+                        try {
+                            status = TaskStatus.valueOf(statusStr);
+                        } catch (IllegalArgumentException e) {
+                            status = TaskStatus.TODO; // Default status
+                        }
+                        
+                        Task task = new Task(description.trim(), status, assignee.trim());
+                        tasks.add(taskRepository.save(task));
                     }
-                    
-                    Task task = new Task(description, status, assignee);
-                    tasks.add(taskRepository.save(task));
                 }
             }
+        } catch (Exception e) {
+            throw new IOException("Error processing Excel file: " + e.getMessage());
         }
         
         return tasks;
+    }
+    
+    private String getCellValueAsString(Cell cell) {
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf((int) cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            default:
+                return "";
+        }
     }
 }

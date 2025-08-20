@@ -58,9 +58,22 @@ public class TaskController {
     
     @PostMapping("/tasks/upload")
     public ResponseEntity<?> uploadTasks(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please select a file to upload");
+        }
+        
+        String filename = file.getOriginalFilename();
+        if (filename == null || (!filename.endsWith(".xlsx") && !filename.endsWith(".xls"))) {
+            return ResponseEntity.badRequest().body("Please upload an Excel file (.xlsx or .xls)");
+        }
+        
         try {
             List<Task> tasks = taskService.uploadTasksFromExcel(file);
-            return ResponseEntity.ok(tasks);
+            return ResponseEntity.ok(java.util.Map.of(
+                "message", "Successfully replaced all tasks with " + tasks.size() + " new tasks from Excel",
+                "tasks", tasks,
+                "replaced", true
+            ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error processing file: " + e.getMessage());
         }
