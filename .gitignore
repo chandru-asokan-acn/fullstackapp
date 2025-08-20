@@ -1,0 +1,21 @@
+# Backend
+backend/target/
+backend/*.class
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+
+# Frontend
+frontend/hello-frontend/node_modules/
+frontend/hello-frontend/dist/
+frontend/hello-frontend/.angular/
+frontend/hello-frontend/npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

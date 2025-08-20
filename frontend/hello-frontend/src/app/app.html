@@ -1,0 +1,35 @@
+<div style="text-align: center; margin-top: 50px;">
+  <h1>Full Stack Application</h1>
+  <h2>{{ message() }}</h2>
+  
+  <div style="margin-top: 30px;">
+    <label for="countrySelect" style="font-size: 18px; margin-right: 10px;">Select a Country:</label>
+    <select id="countrySelect" (change)="onCountryChange($event)" style="padding: 8px; font-size: 16px;">
+      <option value="">-- Choose a country --</option>
+      @for (country of countries(); track country) {
+        <option [value]="country">{{ country }}</option>
+      }
+    </select>
+  </div>
+  
+  <div style="margin-top: 20px;">
+    <label for="stateSelect" style="font-size: 18px; margin-right: 10px;">Select a State:</label>
+    <select id="stateSelect" (change)="onStateChange($event)" style="padding: 8px; font-size: 16px;">
+      <option value="">-- Choose a state --</option>
+      @for (state of states(); track state) {
+        <option [value]="state">{{ state }}</option>
+      }
+    </select>
+  </div>
+  
+  @if (selectedCountry() || selectedState()) {
+    <div style="margin-top: 20px;">
+      @if (selectedCountry()) {
+        <h3>Country: {{ selectedCountry() }}</h3>
+      }
+      @if (selectedState()) {
+        <h3>State: {{ selectedState() }}</h3>
+      }
+    </div>
+  }
+</div>
