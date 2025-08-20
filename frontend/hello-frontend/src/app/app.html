@@ -1,35 +1,89 @@
-<div style="text-align: center; margin-top: 50px;">
-  <h1>Full Stack Application</h1>
-  <h2>{{ message() }}</h2>
+<div class="container">
+  <h1>Task Management App</h1>
   
-  <div style="margin-top: 30px;">
-    <label for="countrySelect" style="font-size: 18px; margin-right: 10px;">Select a Country:</label>
-    <select id="countrySelect" (change)="onCountryChange($event)" style="padding: 8px; font-size: 16px;">
-      <option value="">-- Choose a country --</option>
-      @for (country of countries(); track country) {
-        <option [value]="country">{{ country }}</option>
-      }
+  <!-- Search and Filter Section -->
+  <div class="filters">
+    <input 
+      type="text" 
+      placeholder="Search tasks..." 
+      (input)="onSearchChange($event)"
+      class="search-input">
+    
+    <select (change)="onFilterChange($event)" class="filter-select">
+      <option value="ALL">All Tasks</option>
+      <option value="TODO">To Do</option>
+      <option value="IN_PROGRESS">In Progress</option>
+      <option value="DONE">Done</option>
     </select>
   </div>
-  
-  <div style="margin-top: 20px;">
-    <label for="stateSelect" style="font-size: 18px; margin-right: 10px;">Select a State:</label>
-    <select id="stateSelect" (change)="onStateChange($event)" style="padding: 8px; font-size: 16px;">
-      <option value="">-- Choose a state --</option>
-      @for (state of states(); track state) {
-        <option [value]="state">{{ state }}</option>
-      }
+
+  <!-- Task Form -->
+  <div class="task-form">
+    <h3>{{ isEditing() ? 'Edit Task' : 'Add New Task' }}</h3>
+    
+    <input 
+      type="text" 
+      placeholder="Task title" 
+      [value]="currentTask().title"
+      (input)="updateTaskField('title', $event)"
+      class="form-input">
+    
+    <textarea 
+      placeholder="Task description" 
+      [value]="currentTask().description || ''"
+      (input)="updateTaskField('description', $event)"
+      class="form-textarea"></textarea>
+    
+    <select 
+      [value]="currentTask().status"
+      (change)="updateTaskField('status', $event)"
+      class="form-select">
+      <option value="TODO">To Do</option>
+      <option value="IN_PROGRESS">In Progress</option>
+      <option value="DONE">Done</option>
     </select>
-  </div>
-  
-  @if (selectedCountry() || selectedState()) {
-    <div style="margin-top: 20px;">
-      @if (selectedCountry()) {
-        <h3>Country: {{ selectedCountry() }}</h3>
-      }
-      @if (selectedState()) {
-        <h3>State: {{ selectedState() }}</h3>
-      }
+    
+    <div class="form-buttons">
+      <button 
+        (click)="isEditing() ? updateTask() : createTask()" 
+        class="btn btn-primary">
+        {{ isEditing() ? 'Update Task' : 'Create Task' }}
+      </button>
+      
+      <button 
+        (click)="resetForm()" 
+        class="btn btn-secondary">
+        Cancel
+      </button>
     </div>
-  }
+  </div>
+
+  <!-- Task List -->
+  <div class="task-list">
+    <h3>Tasks ({{ filteredTasks().length }})</h3>
+    
+    <div *ngIf="filteredTasks().length === 0" class="no-tasks">
+      No tasks found.
+    </div>
+    
+    <div *ngFor="let task of filteredTasks()" class="task-card">
+      <div class="task-header">
+        <h4>{{ task.title }}</h4>
+        <span class="status-badge" [class]="'status-' + task.status.toLowerCase()">
+          {{ task.status.replace('_', ' ') }}
+        </span>
+      </div>
+      
+      <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
+      
+      <div class="task-meta">
+        <small>Created: {{ task.createdDate | date:'short' }}</small>
+      </div>
+      
+      <div class="task-actions">
+        <button (click)="editTask(task)" class="btn btn-edit">Edit</button>
+        <button (click)="deleteTask(task.id!)" class="btn btn-delete">Delete</button>
+      </div>
+    </div>
+  </div>
 </div>

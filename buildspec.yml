@@ -9,14 +9,17 @@ phases:
       - echo Build started on `date`
   build:
     commands:
-      - echo Building backend...
+      - echo Building Task Management Backend...
       - cd backend
       - mvn clean package -DskipTests
+      - echo Backend JAR created
       - cd ../frontend/hello-frontend
-      - echo Building frontend...
+      - echo Building Task Management Frontend...
       - npm install
       - npm run build
+      - echo Frontend build complete
 artifacts:
   files:
     - backend/target/hello-backend-1.0.0.jar
     - frontend/hello-frontend/dist/**/*
+    - Dockerfile

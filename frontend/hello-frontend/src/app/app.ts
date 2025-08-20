@@ -1,7 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TaskService } from './services/task.service';
+import { Task, TaskStatus } from './models/task.model';
 
 @Component({
   selector: 'app-root',
@@ -10,40 +11,95 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './app.css'
 })
 export class App implements OnInit {
-  message = signal('');
-  countries = signal<string[]>([]);
-  states = signal<string[]>([]);
-  selectedCountry = signal('');
-  selectedState = signal('');
+  tasks = signal<Task[]>([]);
+  filteredTasks = signal<Task[]>([]);
+  currentTask = signal<Task>({ title: '', description: '', status: TaskStatus.TODO });
+  isEditing = signal(false);
+  searchTerm = signal('');
+  filterStatus = signal<TaskStatus | 'ALL'>('ALL');
   
-  constructor(private http: HttpClient) {}
+  TaskStatus = TaskStatus;
   
-  private apiUrl = 'https://your-backend-url.amazonaws.com'; // Update after backend deployment
+  constructor(private taskService: TaskService) {}
   
   ngOnInit() {
-    this.http.get(`${this.apiUrl}/api/hello`, { responseType: 'text' })
-      .subscribe(response => {
-        this.message.set(response);
-      });
-      
-    this.http.get<string[]>(`${this.apiUrl}/api/countries`)
-      .subscribe(response => {
-        this.countries.set(response);
-      });
-      
-    this.http.get<string[]>(`${this.apiUrl}/api/states`)
-      .subscribe(response => {
-        this.states.set(response);
-      });
+    this.loadTasks();
   }
   
-  onCountryChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    this.selectedCountry.set(target.value);
+  loadTasks() {
+    this.taskService.getAllTasks().subscribe(tasks => {
+      this.tasks.set(tasks);
+      this.applyFilters();
+    });
   }
   
-  onStateChange(event: Event) {
+  applyFilters() {
+    let filtered = this.tasks();
+    
+    if (this.searchTerm()) {
+      filtered = filtered.filter(task => 
+        task.title.toLowerCase().includes(this.searchTerm().toLowerCase())
+      );
+    }
+    
+    if (this.filterStatus() !== 'ALL') {
+      filtered = filtered.filter(task => task.status === this.filterStatus());
+    }
+    
+    this.filteredTasks.set(filtered);
+  }
+  
+  onSearchChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm.set(target.value);
+    this.applyFilters();
+  }
+  
+  onFilterChange(event: Event) {
     const target = event.target as HTMLSelectElement;
-    this.selectedState.set(target.value);
+    this.filterStatus.set(target.value as TaskStatus | 'ALL');
+    this.applyFilters();
+  }
+  
+  createTask() {
+    if (this.currentTask().title.trim()) {
+      this.taskService.createTask(this.currentTask()).subscribe(() => {
+        this.loadTasks();
+        this.resetForm();
+      });
+    }
+  }
+  
+  editTask(task: Task) {
+    this.currentTask.set({ ...task });
+    this.isEditing.set(true);
+  }
+  
+  updateTask() {
+    if (this.currentTask().id && this.currentTask().title.trim()) {
+      this.taskService.updateTask(this.currentTask().id!, this.currentTask()).subscribe(() => {
+        this.loadTasks();
+        this.resetForm();
+      });
+    }
+  }
+  
+  deleteTask(id: number) {
+    if (confirm('Are you sure you want to delete this task?')) {
+      this.taskService.deleteTask(id).subscribe(() => {
+        this.loadTasks();
+      });
+    }
+  }
+  
+  resetForm() {
+    this.currentTask.set({ title: '', description: '', status: TaskStatus.TODO });
+    this.isEditing.set(false);
+  }
+  
+  updateTaskField(field: keyof Task, event: Event) {
+    const target = event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+    const current = this.currentTask();
+    this.currentTask.set({ ...current, [field]: target.value });
   }
 }

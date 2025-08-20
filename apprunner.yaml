@@ -1,13 +1,14 @@
 version: 1.0
-runtime: java17
+runtime: docker
 build:
   commands:
     build:
-      - cd backend
-      - mvn clean package -DskipTests
+      - echo "Building Task Management App"
+      - cd backend && mvn clean package -DskipTests
+      - docker build -t task-management-app .
 run:
-  runtime-version: java17
-  command: java -jar backend/target/hello-backend-1.0.0.jar
+  runtime-version: latest
+  command: docker run -p 8080:8080 task-management-app
   network:
     port: 8080
     env: PORT
