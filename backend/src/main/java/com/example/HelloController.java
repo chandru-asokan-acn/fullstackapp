@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Arrays;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://*.amplifyapp.com"})
 public class HelloController {
     
     @GetMapping("/api/hello")

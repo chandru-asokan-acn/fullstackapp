@@ -18,18 +18,20 @@ export class App implements OnInit {
   
   constructor(private http: HttpClient) {}
   
+  private apiUrl = 'https://your-backend-url.amazonaws.com'; // Update after backend deployment
+  
   ngOnInit() {
-    this.http.get('http://localhost:8080/api/hello', { responseType: 'text' })
+    this.http.get(`${this.apiUrl}/api/hello`, { responseType: 'text' })
       .subscribe(response => {
         this.message.set(response);
       });
       
-    this.http.get<string[]>('http://localhost:8080/api/countries')
+    this.http.get<string[]>(`${this.apiUrl}/api/countries`)
       .subscribe(response => {
         this.countries.set(response);
       });
       
-    this.http.get<string[]>('http://localhost:8080/api/states')
+    this.http.get<string[]>(`${this.apiUrl}/api/states`)
       .subscribe(response => {
         this.states.set(response);
       });

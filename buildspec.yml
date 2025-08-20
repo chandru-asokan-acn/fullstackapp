@@ -1,0 +1,22 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+      nodejs: 18
+  pre_build:
+    commands:
+      - echo Build started on `date`
+  build:
+    commands:
+      - echo Building backend...
+      - cd backend
+      - mvn clean package -DskipTests
+      - cd ../frontend/hello-frontend
+      - echo Building frontend...
+      - npm install
+      - npm run build
+artifacts:
+  files:
+    - backend/target/hello-backend-1.0.0.jar
+    - frontend/hello-frontend/dist/**/*
