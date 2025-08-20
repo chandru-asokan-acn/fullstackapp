@@ -12,7 +12,11 @@ phases:
       - echo Building Task Management Backend...
       - cd backend
       - mvn clean package -DskipTests
-      - echo Backend JAR created
+      - echo Verifying JAR file...
+      - ls -la target/
+      - file target/hello-backend-1.0.0.jar
+      - cp target/hello-backend-1.0.0.jar .
+      - echo Backend JAR created and copied to root
       - cd ../frontend/hello-frontend
       - echo Building Task Management Frontend...
       - npm install
@@ -20,6 +24,8 @@ phases:
       - echo Frontend build complete
 artifacts:
   files:
-    - backend/target/hello-backend-1.0.0.jar
+    - backend/hello-backend-1.0.0.jar
+    - backend/Procfile
+    - backend/.ebextensions/**/*
     - frontend/hello-frontend/dist/**/*
     - Dockerfile
